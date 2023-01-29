@@ -1,6 +1,7 @@
 import makeWASocket, { DisconnectReason, useMultiFileAuthState,  } from '@adiwajshing/baileys'
 import { Boom } from '@hapi/boom'
-
+import { Coordinates, CalculationMethod, PrayerTimes } from 'adhan';
+import moment from 'moment-timezone';
 async function connectToWhatsApp () {
     const {state, saveCreds} = await useMultiFileAuthState('auth')
     const sock = makeWASocket({
@@ -23,11 +24,32 @@ async function connectToWhatsApp () {
         }
     })
     sock.ev.on('messages.upsert', async m => {
-        console.log(JSON.stringify(m, undefined, 2))
+        const msg = m.messages[0];
 
-        console.log('HAHAHAHAHAHAHA', m.messages[0].key.remoteJid)
-        //await sock.sendMessage(m.messages[0].key.remoteJid!, { text: 'Hello there!' })
+        if (!msg.key.fromMe && m.type === 'notify' ){
+           if (msg.message?.locationMessage){
+                const latitude = msg.message?.locationMessage?.degreesLatitude
+                const longutide = msg.message?.locationMessage?.degreesLongitude
+                
+                const coordinates = new Coordinates(latitude!, longutide!);
+                const params = CalculationMethod.MoonsightingCommittee();
+                const date = new Date() ;
+                const prayerTimes = new PrayerTimes(coordinates, date, params);
+                console.log(prayerTimes);
+                await sock.sendMessage(msg.key.remoteJid!, { text: processData(prayerTimes)})
+           } 
+        }
+        // console.log(JSON.stringify(m, undefined, 2))
     })
 }
 
+function processData(data: any){
+    return `time for shalat, today \n\n subuh : ${processTime(data.fajr)}\n Duha : ${processTime(data.sunrise)}\n Dzuhur : ${processTime(data.dhuhr)}\n ashar : ${processTime(data.asr)}\n maghrib : ${processTime(data.maghrib)}\n isha : ${processTime(data.isha)} `
+}
+
+function processTime(time: any){
+    return moment(time)
+            .tz('Asia/Jakarta')
+            .format('HH:mm') + " WIB"
+}
 connectToWhatsApp()
