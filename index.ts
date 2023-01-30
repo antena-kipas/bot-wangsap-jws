@@ -27,19 +27,27 @@ async function connectToWhatsApp () {
         const msg = m.messages[0];
 
         if (!msg.key.fromMe && m.type === 'notify' ){
-           if (msg.message?.locationMessage){
-                const latitude = msg.message?.locationMessage?.degreesLatitude
-                const longutide = msg.message?.locationMessage?.degreesLongitude
-                
-                const coordinates = new Coordinates(latitude!, longutide!);
-                const params = CalculationMethod.MoonsightingCommittee();
-                const date = new Date() ;
-                const prayerTimes = new PrayerTimes(coordinates, date, params);
-                console.log(prayerTimes);
-                await sock.sendMessage(msg.key.remoteJid!, { text: processData(prayerTimes)})
-           } 
-        }
-        // console.log(JSON.stringify(m, undefined, 2))
+            if (msg.message?.locationMessage){
+                 const latitude = msg.message?.locationMessage?.degreesLatitude
+                 const longutide = msg.message?.locationMessage?.degreesLongitude
+                 
+                 const coordinates = new Coordinates(latitude!, longutide!);
+                 const params = CalculationMethod.MoonsightingCommittee();
+                 const date = new Date() ;
+                 const prayerTimes = new PrayerTimes(coordinates, date, params);
+                 console.log(prayerTimes);
+                 await sock.sendMessage(msg.key.remoteJid!, { text: processData(prayerTimes)})
+            } else if (msg.message?.conversation === '/kristen'){
+                await sock.sendMessage(msg.key.remoteJid!, { text: "don' forget to read al-kitab"})
+            } else {
+                await sock.sendMessage(msg.key.remoteJid!, { text: "This is bot for rermind the time of worship"})
+            }
+ 
+            
+         } 
+
+      
+        
     })
 }
 
