@@ -112,6 +112,6 @@ function processData(data: any){
 function processTime(time: any){
     return moment(time)
             .tz('Asia/Jakarta')
-            .format('HH:mm') + " WIB"
+            .format('HH:mm')
 }
 connectToWhatsApp()
