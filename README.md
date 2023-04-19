@@ -1,6 +1,7 @@
 # bot-whatsapp-riminder-worship
-hi my name is Hasan Maulana Ainulyaqin 
+Halo nama saya Hasan Maulana Ainulyaqin 
 
-and this is bot for reminder worship
-
+Repo ini merupakan repo untuk tugas sekolah TEXT PROCEDURE. 
+pada repo ini saya membuat simple bot Whatsapp menggunakan Typescript
+untuk menampilkan Jadwal sholat.
 
